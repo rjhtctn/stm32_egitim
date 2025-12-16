@@ -1,58 +1,35 @@
-\# 02. GPIO Giriş Uygulaması: Buton Durumu Okuma (Digital Input)
+# 02. GPIO Giriş Uygulaması: Buton Okuma
 
+Bu proje, **STM32F303RE** mikrodenetleyicisinde bir GPIO pininin **Giriş (Input)** olarak yapılandırılmasını ve buton durumunun okunmasını gösterir.
 
+Uygulamada, Nucleo kartı üzerindeki kullanıcı butonu (B1) sürekli taranarak (polling yöntemiyle) durumu bir değişkene aktarılır.
 
-Bu proje, \*\*STM32F303RE\*\* mikrodenetleyicisinde bir GPIO pininin "Input" (Giriş) olarak kullanılmasını ve pinin lojik durumunun (0 veya 1) okunmasını gösterir.
+![Platform](https://img.shields.io/badge/Donanım-NUCLEO--F303RE-green)
+![Peripheral](https://img.shields.io/badge/Peripheral-GPIO_Input-blue)
 
+## ⚙️ Donanım ve Pin Ayarları
 
-
-Uygulamada, Nucleo kartı üzerindeki \*\*Mavi Kullanıcı Butonu (B1)\*\* durumu okunarak bir değişkene aktarılmaktadır. Bu proje, \*\*Debug modunda değişken takibi (Live Expressions)\*\* özelliğini öğrenmek için tasarlanmıştır.
-
-
-
-!\[Platform](https://img.shields.io/badge/Donanım-NUCLEO--F303RE-green)
-
-!\[Peripheral](https://img.shields.io/badge/Peripheral-GPIO\_Input-blue)
-
-
-
-\## ⚙️ Donanım Bağlantıları
-
-
+Bu proje için Nucleo-F303RE kartındaki şu bağlantılar kullanılmıştır:
 
 | Pin | Etiket | Donanım | Açıklama |
-
 | :--- | :--- | :--- | :--- |
+| **PC13** | `B1_Pin` | **User Button (Mavi)** | Giriş (Input) olarak ayarlandı. |
+| **PA5** | `LD2_Pin` | **User LED (Yeşil)** | Çıkış (Output) - *Bu uygulamada kullanılmadı.* |
 
-| \*\*PC13\*\* | `B1\_Pin` | \*\*User Button (Mavi)\*\* | Giriş Pini (Input) |
+## 📝 Yazılımın Çalışma Mantığı
 
+Kodun işleyişi şu adımlardan oluşur:
 
-
-\## 📝 Yazılım Mantığı
-
-
-
-1\.  \*\*Değişken Tanımlama:\*\* Butonun durumunu saklamak için global bir `uint8\_t butonDurumu` değişkeni oluşturulmuştur (Varsayılan: 1).
-
-2\.  \*\*GPIO Okuma (`HAL\_GPIO\_ReadPin`):\*\*
-
-&nbsp;   \* Ana döngü (`while(1)`) içerisinde sürekli olarak \*\*PC13\*\* portunun durumu okunur.
-
-&nbsp;   \* Butona basıldığında veya bırakıldığında pinin lojik seviyesi (SET/RESET) değişkene anlık olarak yazılır.
-
-
+1.  **Sistem Saati:** İşlemci hızı 72 MHz olarak ayarlanmıştır.
+2.  **GPIO Başlatma:** `PC13` pini giriş modunda aktif edilmiştir.
+3.  **Ana Döngü (`while(1)`):**
+    * Kod sürekli olarak `GPIOC` portunun 13. pinini kontrol eder.
+    * Okunan değer (0 veya 1), `butonDurumu` adlı değişkene yazılır.
 
 ```c
-
-/\* Ana döngü içerisindeki okuma işlemi \*/
-
+/* Ana döngü içerisindeki okuma komutu */
 while (1)
-
 {
-
-&nbsp; // GPIOC portunun 13. pinini oku ve sonucu değişkene ata
-
-&nbsp; butonDurumu = HAL\_GPIO\_ReadPin(GPIOC, GPIO\_PIN\_13);
-
+  // Butonun anlık durumunu oku ve değişkene kaydet
+  butonDurumu = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
 }
-
